@@ -5,6 +5,7 @@ import { BrandMark } from "./BrandMark";
 interface HeaderProps {
   hostname?: string;
   platform?: PlatformInfo;
+  platforms?: PlatformInfo[];
   generatedAt?: string;
   refreshing: boolean;
   theme: "dark" | "light";
@@ -15,6 +16,7 @@ interface HeaderProps {
 export function Header({
   hostname,
   platform,
+  platforms,
   generatedAt,
   refreshing,
   theme,
@@ -34,7 +36,7 @@ export function Header({
       <div className="header-status" aria-label="연결 상태">
         <span className="live-dot" />
         <span className={`header-platform platform-${platform?.id || "unknown"}`}>
-          {platform?.label || "Local"}
+          {platforms?.map((item) => item.label).join(" + ") || platform?.label || "Local"}
         </span>
         <span className="header-divider" />
         <span className="host-name">{hostname || "local"}</span>

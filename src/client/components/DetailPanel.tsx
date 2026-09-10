@@ -111,7 +111,7 @@ export function DetailPanel({ item, onClose, onAction }: DetailPanelProps) {
             <div><dt><CalendarClock size={15} />주기</dt><dd><code>{item.schedule}</code></dd></div>
             <div><dt><Clock3 size={15} />다음 실행</dt><dd>{formatDate(item.nextRun)}</dd></div>
             <div><dt><Clock3 size={15} />최근 실행</dt><dd>{formatDate(item.lastRun)}</dd></div>
-            <div><dt><Info size={15} />범위</dt><dd>{item.scope === "user" ? "사용자" : item.scope === "system" ? "시스템" : "에이전트"}</dd></div>
+            <div><dt><Info size={15} />범위</dt><dd>{item.scope === "user" ? "사용자" : item.scope === "system" ? "시스템" : item.scope === "windows" ? "Windows" : "에이전트"}</dd></div>
           </dl>
         </section>
 

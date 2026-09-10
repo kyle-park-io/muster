@@ -1,4 +1,5 @@
 export type SourceId =
+  | "windows-task"
   | "systemd-user"
   | "systemd-system"
   | "cron"
@@ -33,7 +34,7 @@ export interface ScheduleItem {
   source: SourceId;
   name: string;
   description: string;
-  scope: "user" | "system" | "agent";
+  scope: "user" | "system" | "windows" | "agent";
   state: ScheduleState;
   enabled: boolean;
   controllable: boolean;
@@ -52,6 +53,7 @@ export interface OverviewResponse {
   hostname: string;
   timezone: string;
   platform: PlatformInfo;
+  platforms: PlatformInfo[];
   sources: SchedulerSource[];
   schedules: ScheduleItem[];
 }

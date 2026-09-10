@@ -28,3 +28,11 @@ export function detectPlatform(
 
   return { id, label, release: releaseName, architecture };
 }
+
+export function detectPlatforms(primary = detectPlatform()): PlatformInfo[] {
+  if (primary.id !== "wsl") return [primary];
+  return [
+    { id: "windows", label: "Windows", release: "", architecture: primary.architecture },
+    primary,
+  ];
+}

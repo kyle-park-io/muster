@@ -25,7 +25,7 @@ export function Summary({ schedules }: SummaryProps) {
     {
       label: "꺼진 스케줄",
       value: schedules.filter((item) => !item.enabled).length,
-      detail: "직접 다시 켤 수 있음",
+      detail: "현재 비활성 상태",
       tone: "amber",
       icon: CirclePause,
     },

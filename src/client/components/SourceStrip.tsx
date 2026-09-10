@@ -1,4 +1,4 @@
-import { Bot, Clock3, Cpu, TerminalSquare } from "lucide-react";
+import { Bot, Clock3, Cpu, MonitorCog, TerminalSquare } from "lucide-react";
 import type { SchedulerSource, SourceId } from "../../shared/types";
 
 interface SourceStripProps {
@@ -8,6 +8,7 @@ interface SourceStripProps {
 }
 
 const iconMap = {
+  "windows-task": MonitorCog,
   "systemd-user": Cpu,
   "systemd-system": TerminalSquare,
   cron: Clock3,

@@ -3,11 +3,18 @@ import { AgentAdapter } from "./agents.js";
 import { CronAdapter } from "./cron.js";
 import { SystemdAdapter } from "./systemd.js";
 import type { SchedulerAdapter } from "./types.js";
+import { WindowsTaskAdapter } from "./windows.js";
+import { detectPlatform } from "../platform.js";
+
+const platform = detectPlatform();
+const supportsWindows = platform.id === "windows" || platform.id === "wsl";
+const supportsSystemd = platform.id === "linux" || platform.id === "wsl";
+const supportsCron = platform.id !== "windows";
 
 export const adapters: SchedulerAdapter[] = [
-  new SystemdAdapter("user"),
-  new SystemdAdapter("system"),
-  new CronAdapter(),
+  ...(supportsWindows ? [new WindowsTaskAdapter()] : []),
+  ...(supportsSystemd ? [new SystemdAdapter("user"), new SystemdAdapter("system")] : []),
+  ...(supportsCron ? [new CronAdapter()] : []),
   new AgentAdapter("claude"),
   new AgentAdapter("codex"),
 ];

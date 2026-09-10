@@ -14,6 +14,7 @@ const timeFormatter = new Intl.DateTimeFormat("ko-KR", {
 });
 
 export const sourceNames: Record<SourceId, string> = {
+  "windows-task": "Windows Tasks",
   "systemd-user": "systemd User",
   "systemd-system": "systemd System",
   cron: "Cron",
@@ -57,6 +58,14 @@ export function isToday(value: string | null): boolean {
 }
 
 export function actionCommand(item: ScheduleItem, action: "enable" | "disable" | "run"): string {
+  if (item.source === "windows-task") {
+    const command = action === "run"
+      ? "Start-ScheduledTask"
+      : action === "enable"
+        ? "Enable-ScheduledTask"
+        : "Disable-ScheduledTask";
+    return `${command} -TaskName "${item.metadata.taskName}" -TaskPath "${item.metadata.taskPath}"`;
+  }
   if (item.source === "systemd-user") {
     if (action === "run") return `systemctl --user start ${item.metadata.service}`;
     return `systemctl --user ${action} --now ${item.metadata.timer}`;

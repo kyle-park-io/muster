@@ -185,6 +185,7 @@ button:disabled { cursor: not-allowed; opacity: 0.45; }
 .connection-dot.error { background: var(--red); }
 
 .source-systemd-user, .source-systemd-system { color: #8dacf7; }
+.source-windows-task { color: #69a7ff; }
 .source-cron { color: #d4ae65; }
 .source-codex { color: #64cfaa; }
 .source-claude { color: #d58b61; }

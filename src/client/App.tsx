@@ -110,6 +110,7 @@ export default function App() {
       <Header
         hostname={overview?.hostname}
         platform={overview?.platform}
+        platforms={overview?.platforms}
         generatedAt={overview?.generatedAt}
         refreshing={refreshing}
         theme={theme}
@@ -127,7 +128,7 @@ export default function App() {
           <div className="environment-chips" aria-label="로컬 실행 환경">
             <div className="platform-chip" title={overview ? `${overview.platform.release} · ${overview.platform.architecture}` : undefined}>
               <MonitorCog size={13} />
-              {overview?.platform.label || "운영체제 확인 중"}
+              {overview?.platforms.map((item) => item.label).join(" + ") || "운영체제 확인 중"}
             </div>
             <div className="timezone-chip">
               <span />
