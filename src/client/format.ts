@@ -1,4 +1,4 @@
-import type { ScheduleItem, ScheduleState, SourceId } from "../shared/types";
+import type { EnvironmentId, ScheduleItem, ScheduleState, SourceId } from "../shared/types";
 
 const relativeFormatter = new Intl.RelativeTimeFormat("ko", { numeric: "auto" });
 const fullFormatter = new Intl.DateTimeFormat("ko-KR", {
@@ -20,6 +20,14 @@ export const sourceNames: Record<SourceId, string> = {
   cron: "Cron",
   codex: "Codex",
   claude: "Claude",
+};
+
+export const environmentNames: Record<EnvironmentId, string> = {
+  windows: "Windows",
+  wsl: "WSL",
+  macos: "macOS",
+  linux: "Linux",
+  unknown: "기타",
 };
 
 export const stateNames: Record<ScheduleState, string> = {

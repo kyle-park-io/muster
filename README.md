@@ -3,6 +3,8 @@
 로컬 컴퓨터에서 반복 실행되는 작업을 한곳에서 살펴보고 제어하는 대시보드입니다.
 Windows, WSL, macOS, Linux를 구분해 현재 실행 환경을 표시합니다.
 WSL에서 실행하면 Windows Task Scheduler와 WSL 내부의 systemd 및 cron을 함께 조회합니다.
+환경 필터와 소스 필터를 따로 제공하므로 `Windows · Codex`와 `WSL · Codex`처럼
+같은 에이전트도 실행 환경별로 구분할 수 있습니다.
 
 ## 현재 지원 범위
 
@@ -12,8 +14,8 @@ WSL에서 실행하면 Windows Task Scheduler와 WSL 내부의 systemd 및 cron�
 | 사용자 systemd timer | 지원 | 지원 | 지원 | 지원 |
 | 시스템 systemd timer | 지원 | 조회 전용 | 조회 전용 | 지원 |
 | 사용자 crontab | 지원 | 지원 | 지원 | 별도 표준 로그 없음 |
-| Codex 자동화 | 로컬 파일 감지 | 조회 전용 | 조회 전용 | 준비 중 |
-| Claude 예약 작업 | 설치 상태 감지 | 조회 전용 | 조회 전용 | 준비 중 |
+| Codex 자동화 | Windows와 현재 환경의 로컬 파일 감지 | 조회 전용 | 조회 전용 | 준비 중 |
+| Claude 예약 작업 | Windows와 현재 환경의 설치 상태 감지 | 조회 전용 | 조회 전용 | 준비 중 |
 
 시스템 범위의 제어는 관리자 권한 처리가 필요하므로 현재 읽기 전용입니다. Codex와
 Claude의 로컬 저장 형식도 공개된 제어 계약이 확인된 범위에서만 읽습니다.

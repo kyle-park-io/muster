@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AlertCircle, MonitorCog, RefreshCw } from "lucide-react";
 import type {
+  EnvironmentId,
   OverviewResponse,
   ScheduleAction,
   ScheduleItem,
@@ -32,6 +33,7 @@ export default function App() {
   const [refreshing, setRefreshing] = useState(false);
   const [theme, setTheme] = useState<"dark" | "light">(initialTheme);
   const [source, setSource] = useState<SourceId | "all">("all");
+  const [environment, setEnvironment] = useState<EnvironmentId | "all">("all");
   const [status, setStatus] = useState<StatusFilter>("all");
   const [search, setSearch] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -84,6 +86,12 @@ export default function App() {
     () => overview?.schedules.find((item) => item.id === selectedId) ?? null,
     [overview, selectedId],
   );
+
+  const selectedSchedules = useMemo(() => overview?.schedules.filter((item) => {
+    if (environment !== "all" && item.environment !== environment) return false;
+    if (source !== "all" && item.source !== source) return false;
+    return true;
+  }) ?? [], [environment, overview, source]);
 
   const closeDetail = useCallback(() => setSelectedId(null), []);
 
@@ -138,7 +146,19 @@ export default function App() {
         </div>
 
         {overview && (
-          <SourceStrip sources={overview.sources} selected={source} onSelect={setSource} />
+          <SourceStrip
+            sources={overview.sources}
+            selectedSource={source}
+            selectedEnvironment={environment}
+            onSourceSelect={setSource}
+            onEnvironmentSelect={(nextEnvironment) => {
+              setEnvironment(nextEnvironment);
+              if (source !== "all" && !overview.sources.some((item) =>
+                item.id === source && (nextEnvironment === "all" || item.environment === nextEnvironment))) {
+                setSource("all");
+              }
+            }}
+          />
         )}
 
         {error && !overview && (
@@ -159,13 +179,14 @@ export default function App() {
 
         {overview && (
           <>
-            <Summary schedules={overview.schedules} />
-            <Timeline schedules={overview.schedules} onSelect={(item) => setSelectedId(item.id)} />
+            <Summary schedules={selectedSchedules} />
+            <Timeline schedules={selectedSchedules} onSelect={(item) => setSelectedId(item.id)} />
             <ScheduleTable
               schedules={overview.schedules}
               search={search}
               status={status}
               source={source}
+              environment={environment}
               onSearch={setSearch}
               onStatus={setStatus}
               onSelect={(item) => setSelectedId(item.id)}

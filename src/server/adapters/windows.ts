@@ -128,6 +128,8 @@ function quotePowerShell(value: string): string {
 
 export class WindowsTaskAdapter implements SchedulerAdapter {
   readonly id = "windows-task" as const;
+  readonly environment = "windows" as const;
+  readonly key = `${this.id}:${this.environment}`;
 
   private async readTasks(): Promise<WindowsTaskPayload> {
     const result = await runCommand(
@@ -152,8 +154,9 @@ export class WindowsTaskAdapter implements SchedulerAdapter {
           .join("; ");
         const lastRun = toIso(task.LastRunTime);
         return {
-          id: `${this.id}:${fingerprint(task)}`,
+          id: `${this.key}:${fingerprint(task)}`,
           source: this.id,
+          environment: this.environment,
           name: task.TaskName,
           description: displayText(task.Author || `${task.TaskPath}${task.TaskName}`),
           scope: "windows",
@@ -189,8 +192,9 @@ export class WindowsTaskAdapter implements SchedulerAdapter {
       return {
         source: {
           id: this.id,
+          environment: this.environment,
           name: "Windows Task Scheduler",
-          shortName: "Windows",
+          shortName: "Tasks",
           status: schedules.length ? "connected" : "empty",
           count: schedules.length,
           controllable: schedules.some((item) => item.controllable),
@@ -204,8 +208,9 @@ export class WindowsTaskAdapter implements SchedulerAdapter {
       return {
         source: {
           id: this.id,
+          environment: this.environment,
           name: "Windows Task Scheduler",
-          shortName: "Windows",
+          shortName: "Tasks",
           status: "error",
           count: 0,
           controllable: false,
@@ -217,7 +222,7 @@ export class WindowsTaskAdapter implements SchedulerAdapter {
   }
 
   private async resolve(id: string): Promise<{ task: WindowsTask; currentUser: string }> {
-    const target = id.slice(`${this.id}:`.length);
+    const target = id.slice(`${this.key}:`.length);
     if (!/^[a-f0-9]{16}$/.test(target)) throw new Error("올바르지 않은 Windows 작업입니다.");
     const payload = await this.readTasks();
     const task = asArray(payload.Tasks).find((item) => fingerprint(item) === target);

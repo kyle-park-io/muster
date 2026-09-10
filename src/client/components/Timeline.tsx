@@ -1,6 +1,6 @@
 import { ArrowUpRight, Clock3 } from "lucide-react";
 import type { ScheduleItem } from "../../shared/types";
-import { formatDate, formatTime, relativeDate, sourceNames } from "../format";
+import { environmentNames, formatDate, formatTime, relativeDate, sourceNames } from "../format";
 
 interface TimelineProps {
   schedules: ScheduleItem[];
@@ -34,7 +34,9 @@ export function Timeline({ schedules, onSelect }: TimelineProps) {
                 <small>{relativeDate(item.nextRun)}</small>
               </time>
               <button type="button" className="timeline-item" onClick={() => onSelect(item)}>
-                <span className={`mini-source source-${item.source}`}>{sourceNames[item.source]}</span>
+                <span className={`mini-source source-${item.source}`}>
+                  {environmentNames[item.environment]} · {sourceNames[item.source]}
+                </span>
                 <strong>{item.name}</strong>
                 <small>{formatDate(item.nextRun)}</small>
                 <ArrowUpRight size={15} />

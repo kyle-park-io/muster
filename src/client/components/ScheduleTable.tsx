@@ -1,6 +1,6 @@
 import { ChevronRight, Filter, Search, SlidersHorizontal } from "lucide-react";
-import type { ScheduleItem, ScheduleState, SourceId } from "../../shared/types";
-import { formatDate, relativeDate, sourceNames, stateNames } from "../format";
+import type { EnvironmentId, ScheduleItem, ScheduleState, SourceId } from "../../shared/types";
+import { environmentNames, formatDate, relativeDate, sourceNames, stateNames } from "../format";
 
 export type StatusFilter = "all" | "enabled" | "paused" | "failed";
 
@@ -9,6 +9,7 @@ interface ScheduleTableProps {
   search: string;
   status: StatusFilter;
   source: SourceId | "all";
+  environment: EnvironmentId | "all";
   onSearch: (value: string) => void;
   onStatus: (value: StatusFilter) => void;
   onSelect: (item: ScheduleItem) => void;
@@ -35,6 +36,7 @@ export function ScheduleTable({
   search,
   status,
   source,
+  environment,
   onSearch,
   onStatus,
   onSelect,
@@ -42,6 +44,7 @@ export function ScheduleTable({
   const normalizedSearch = search.trim().toLocaleLowerCase("ko");
   const filtered = schedules.filter((item) => {
     if (source !== "all" && item.source !== source) return false;
+    if (environment !== "all" && item.environment !== environment) return false;
     if (status === "enabled" && !item.enabled) return false;
     if (status === "paused" && item.enabled) return false;
     if (status === "failed" && item.state !== "failed") return false;
@@ -119,7 +122,14 @@ export function ScheduleTable({
                     </span>
                   </button>
                 </td>
-                <td><span className="source-name">{sourceNames[item.source]}</span></td>
+                <td>
+                  <span className="source-origin">
+                    <span className={`environment-badge environment-${item.environment}`}>
+                      {environmentNames[item.environment]}
+                    </span>
+                    <span className="source-name">{sourceNames[item.source]}</span>
+                  </span>
+                </td>
                 <td><StateBadge state={item.state} /></td>
                 <td><code className="schedule-code">{item.schedule}</code></td>
                 <td>

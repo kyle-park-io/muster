@@ -8,6 +8,7 @@ import { Summary } from "./Summary";
 const baseSchedule: ScheduleItem = {
   id: "systemd-user:backup.timer",
   source: "systemd-user",
+  environment: "linux",
   name: "backup",
   description: "Backup files",
   scope: "user",

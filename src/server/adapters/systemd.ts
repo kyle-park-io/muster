@@ -1,4 +1,5 @@
 import type {
+  EnvironmentId,
   LogsResponse,
   ScheduleAction,
   ScheduleItem,
@@ -57,11 +58,15 @@ function displayText(value: string): string {
 
 export class SystemdAdapter implements SchedulerAdapter {
   readonly id: SourceId;
+  readonly environment: EnvironmentId;
+  readonly key: string;
   private readonly user: boolean;
 
-  constructor(scope: "user" | "system") {
+  constructor(scope: "user" | "system", environment: EnvironmentId) {
     this.user = scope === "user";
     this.id = this.user ? "systemd-user" : "systemd-system";
+    this.environment = environment;
+    this.key = `${this.id}:${environment}`;
   }
 
   private args(...args: string[]): string[] {
@@ -114,8 +119,9 @@ export class SystemdAdapter implements SchedulerAdapter {
         const enabled = timer.UnitFileState === "enabled" || timer.UnitFileState === "static";
         const failed = service.Result === "failed" || timer.ActiveState === "failed";
         return {
-          id: `${this.id}:${row.unit}`,
+          id: `${this.key}:${row.unit}`,
           source: this.id,
+          environment: this.environment,
           name: row.unit.replace(/\.timer$/, ""),
           description: displayText(timer.Description || row.activates),
           scope: this.user ? "user" : "system",
@@ -147,6 +153,7 @@ export class SystemdAdapter implements SchedulerAdapter {
       return {
         source: {
           id: this.id,
+          environment: this.environment,
           name: label,
           shortName: this.user ? "User" : "System",
           status: schedules.length ? "connected" : "empty",
@@ -162,6 +169,7 @@ export class SystemdAdapter implements SchedulerAdapter {
       return {
         source: {
           id: this.id,
+          environment: this.environment,
           name: label,
           shortName: this.user ? "User" : "System",
           status: "error",
@@ -176,7 +184,7 @@ export class SystemdAdapter implements SchedulerAdapter {
 
   async action(id: string, action: ScheduleAction): Promise<string> {
     if (!this.user) throw new Error("시스템 timer는 조회 전용입니다.");
-    const unit = id.slice(`${this.id}:`.length);
+    const unit = id.slice(`${this.key}:`.length);
     if (!UNIT_PATTERN.test(unit) || !unit.endsWith(".timer")) {
       throw new Error("올바르지 않은 systemd unit입니다.");
     }
@@ -196,7 +204,7 @@ export class SystemdAdapter implements SchedulerAdapter {
   }
 
   async logs(id: string): Promise<LogsResponse> {
-    const unit = id.slice(`${this.id}:`.length).replace(/\.timer$/, ".service");
+    const unit = id.slice(`${this.key}:`.length).replace(/\.timer$/, ".service");
     if (!UNIT_PATTERN.test(unit)) throw new Error("올바르지 않은 systemd unit입니다.");
     const result = await runCommand(
       "journalctl",

@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import type { LogsResponse, ScheduleAction, ScheduleItem } from "../../shared/types";
 import { fetchLogs } from "../api";
-import { formatDate, sourceNames, stateNames } from "../format";
+import { environmentNames, formatDate, sourceNames, stateNames } from "../format";
 
 interface DetailPanelProps {
   item: ScheduleItem;
@@ -71,6 +71,9 @@ export function DetailPanel({ item, onClose, onAction }: DetailPanelProps) {
       <aside ref={panel} className="detail-panel" role="dialog" aria-modal="true" aria-labelledby="detail-title">
         <div className="detail-header">
           <div className="detail-source-row">
+            <span className={`environment-badge environment-${item.environment}`}>
+              {environmentNames[item.environment]}
+            </span>
             <span className={`mini-source source-${item.source}`}>{sourceNames[item.source]}</span>
             <span className={`state-badge state-${item.state}`}><i />{stateNames[item.state]}</span>
           </div>
@@ -112,6 +115,7 @@ export function DetailPanel({ item, onClose, onAction }: DetailPanelProps) {
             <div><dt><Clock3 size={15} />다음 실행</dt><dd>{formatDate(item.nextRun)}</dd></div>
             <div><dt><Clock3 size={15} />최근 실행</dt><dd>{formatDate(item.lastRun)}</dd></div>
             <div><dt><Info size={15} />범위</dt><dd>{item.scope === "user" ? "사용자" : item.scope === "system" ? "시스템" : item.scope === "windows" ? "Windows" : "에이전트"}</dd></div>
+            <div><dt><Info size={15} />환경</dt><dd>{environmentNames[item.environment]}</dd></div>
           </dl>
         </section>
 

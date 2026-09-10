@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import type {
+  EnvironmentId,
   LogsResponse,
   ScheduleAction,
   ScheduleItem,
@@ -70,6 +71,13 @@ async function readCrontab(): Promise<{ content: string; unavailable: boolean }>
 
 export class CronAdapter implements SchedulerAdapter {
   readonly id = "cron" as const;
+  readonly environment: EnvironmentId;
+  readonly key: string;
+
+  constructor(environment: EnvironmentId) {
+    this.environment = environment;
+    this.key = `${this.id}:${environment}`;
+  }
 
   async collect(): Promise<AdapterSnapshot> {
     try {
@@ -77,8 +85,9 @@ export class CronAdapter implements SchedulerAdapter {
       if (unavailable) throw new Error("사용자 crontab을 읽을 수 없습니다.");
       const entries = parseCrontab(content);
       const schedules: ScheduleItem[] = entries.map((entry, index) => ({
-        id: `${this.id}:${entry.hash}`,
+        id: `${this.key}:${entry.hash}`,
         source: this.id,
+        environment: this.environment,
         name: `cron 작업 ${index + 1}`,
         description: entry.command,
         scope: "user",
@@ -97,6 +106,7 @@ export class CronAdapter implements SchedulerAdapter {
       return {
         source: {
           id: this.id,
+          environment: this.environment,
           name: "사용자 crontab",
           shortName: "Cron",
           status: schedules.length ? "connected" : "empty",
@@ -112,6 +122,7 @@ export class CronAdapter implements SchedulerAdapter {
       return {
         source: {
           id: this.id,
+          environment: this.environment,
           name: "사용자 crontab",
           shortName: "Cron",
           status: "error",
@@ -125,7 +136,7 @@ export class CronAdapter implements SchedulerAdapter {
   }
 
   async action(id: string, action: ScheduleAction): Promise<string> {
-    const targetHash = id.slice(`${this.id}:`.length);
+    const targetHash = id.slice(`${this.key}:`.length);
     if (!/^[a-f0-9]{16}$/.test(targetHash)) throw new Error("올바르지 않은 cron 작업입니다.");
     const { content, unavailable } = await readCrontab();
     if (unavailable) throw new Error("사용자 crontab을 읽을 수 없습니다.");

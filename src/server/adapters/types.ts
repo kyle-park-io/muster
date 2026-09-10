@@ -4,6 +4,7 @@ import type {
   ScheduleItem,
   SchedulerSource,
   SourceId,
+  EnvironmentId,
 } from "../../shared/types.js";
 
 export interface AdapterSnapshot {
@@ -13,6 +14,8 @@ export interface AdapterSnapshot {
 
 export interface SchedulerAdapter {
   id: SourceId;
+  key: string;
+  environment: EnvironmentId;
   collect(): Promise<AdapterSnapshot>;
   action(id: string, action: ScheduleAction): Promise<string>;
   logs(id: string): Promise<LogsResponse>;

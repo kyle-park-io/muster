@@ -1,7 +1,7 @@
 import { access, readdir, readFile } from "node:fs/promises";
-import { homedir } from "node:os";
 import { join } from "node:path";
 import type {
+  EnvironmentId,
   LogsResponse,
   ScheduleItem,
   SourceId,
@@ -28,36 +28,46 @@ function displayText(value: string): string {
 
 export class AgentAdapter implements SchedulerAdapter {
   readonly id: SourceId;
-  private readonly basePath: string;
+  readonly environment: EnvironmentId;
+  readonly key: string;
+  private readonly basePath: () => Promise<string | null>;
   private readonly label: string;
 
-  constructor(agent: "codex" | "claude") {
+  constructor(
+    agent: "codex" | "claude",
+    environment: EnvironmentId,
+    basePath: string | (() => Promise<string | null>),
+  ) {
     this.id = agent;
+    this.environment = environment;
+    this.key = `${agent}:${environment}`;
     this.label = agent === "codex" ? "Codex" : "Claude";
-    this.basePath = join(homedir(), agent === "codex" ? ".codex" : ".claude");
+    this.basePath = typeof basePath === "string" ? async () => basePath : basePath;
   }
 
   async collect(): Promise<AdapterSnapshot> {
-    const installed = await exists(this.basePath);
-    if (!installed) {
+    const basePath = await this.basePath();
+    if (!basePath || !(await exists(basePath))) {
       return {
         source: {
           id: this.id,
+          environment: this.environment,
           name: `${this.label} 스케줄`,
           shortName: this.label,
           status: "unavailable",
           count: 0,
           controllable: false,
-          message: `${this.label} 로컬 디렉터리를 찾지 못했습니다.`,
+          message: `${this.environment === "windows" ? "Windows" : this.environment === "wsl" ? "WSL" : "로컬"} ${this.label} 디렉터리를 찾지 못했습니다.`,
         },
         schedules: [],
       };
     }
 
-    const schedules = this.id === "codex" ? await this.readCodexAutomations() : [];
+    const schedules = this.id === "codex" ? await this.readCodexAutomations(basePath) : [];
     return {
       source: {
         id: this.id,
+        environment: this.environment,
         name: `${this.label} 스케줄`,
         shortName: this.label,
         status: schedules.length ? "connected" : "empty",
@@ -73,8 +83,8 @@ export class AgentAdapter implements SchedulerAdapter {
     };
   }
 
-  private async readCodexAutomations(): Promise<ScheduleItem[]> {
-    const root = join(this.basePath, "automations");
+  private async readCodexAutomations(basePath: string): Promise<ScheduleItem[]> {
+    const root = join(basePath, "automations");
     if (!(await exists(root))) return [];
     const directories = await readdir(root, { withFileTypes: true });
     const schedules: ScheduleItem[] = [];
@@ -89,8 +99,9 @@ export class AgentAdapter implements SchedulerAdapter {
         const status = scalar(content, "status").toLowerCase();
         const enabled = status !== "paused" && status !== "disabled";
         schedules.push({
-          id: `${this.id}:${directory.name}`,
+          id: `${this.key}:${directory.name}`,
           source: this.id,
+          environment: this.environment,
           name,
           description: displayText(prompt || "Codex 자동화"),
           scope: "agent",

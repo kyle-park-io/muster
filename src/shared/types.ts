@@ -12,6 +12,8 @@ export type SourceStatus = "connected" | "empty" | "unavailable" | "error";
 
 export type PlatformId = "windows" | "wsl" | "macos" | "linux" | "unknown";
 
+export type EnvironmentId = PlatformId;
+
 export interface PlatformInfo {
   id: PlatformId;
   label: string;
@@ -21,6 +23,7 @@ export interface PlatformInfo {
 
 export interface SchedulerSource {
   id: SourceId;
+  environment: EnvironmentId;
   name: string;
   shortName: string;
   status: SourceStatus;
@@ -32,6 +35,7 @@ export interface SchedulerSource {
 export interface ScheduleItem {
   id: string;
   source: SourceId;
+  environment: EnvironmentId;
   name: string;
   description: string;
   scope: "user" | "system" | "windows" | "agent";
