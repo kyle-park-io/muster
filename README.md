@@ -20,8 +20,8 @@ Claude의 로컬 저장 형식도 공개된 제어 계약이 확인된 범위에
 Node.js 24 이상을 권장합니다.
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 브라우저에서 `http://127.0.0.1:4317`을 엽니다. 로컬 API는
@@ -30,8 +30,8 @@ npm run dev
 프로덕션 빌드와 실행은 다음과 같습니다.
 
 ```bash
-npm run build
-npm start
+pnpm build
+pnpm start
 ```
 
 ## 안전 장치
@@ -46,10 +46,10 @@ npm start
 ## 명령
 
 ```bash
-npm run typecheck
-npm run lint
-npm test
-npm run build
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm build
 ```
 
 프론트엔드는 React, Vite, TypeScript, Tailwind CSS를 사용합니다. 로컬 API는
