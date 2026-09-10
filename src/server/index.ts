@@ -10,6 +10,7 @@ import type {
   ScheduleAction,
 } from "../shared/types.js";
 import { adapters, findAdapter } from "./adapters/index.js";
+import { detectPlatform } from "./platform.js";
 
 const app = Fastify({ logger: true, bodyLimit: 16 * 1024 });
 const port = Number(process.env.MUSTER_PORT ?? 4318);
@@ -38,6 +39,7 @@ app.get("/api/overview", async (): Promise<OverviewResponse> => {
     generatedAt: new Date().toISOString(),
     hostname: hostname(),
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    platform: detectPlatform(),
     sources: snapshots.map((snapshot) => snapshot.source),
     schedules: snapshots.flatMap((snapshot) => snapshot.schedules),
   };

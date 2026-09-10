@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { AlertCircle, RefreshCw } from "lucide-react";
+import { AlertCircle, MonitorCog, RefreshCw } from "lucide-react";
 import type {
   OverviewResponse,
   ScheduleAction,
@@ -109,6 +109,7 @@ export default function App() {
     <div className="app-shell">
       <Header
         hostname={overview?.hostname}
+        platform={overview?.platform}
         generatedAt={overview?.generatedAt}
         refreshing={refreshing}
         theme={theme}
@@ -123,9 +124,15 @@ export default function App() {
             <h1>로컬 스케줄러</h1>
             <p>이 컴퓨터에서 반복되는 작업을 한곳에서 살펴보고 제어합니다.</p>
           </div>
-          <div className="timezone-chip">
-            <span />
-            {overview?.timezone || "시간대 확인 중"}
+          <div className="environment-chips" aria-label="로컬 실행 환경">
+            <div className="platform-chip" title={overview ? `${overview.platform.release} · ${overview.platform.architecture}` : undefined}>
+              <MonitorCog size={13} />
+              {overview?.platform.label || "운영체제 확인 중"}
+            </div>
+            <div className="timezone-chip">
+              <span />
+              {overview?.timezone || "시간대 확인 중"}
+            </div>
           </div>
         </div>
 

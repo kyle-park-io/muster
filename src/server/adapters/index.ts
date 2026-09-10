@@ -8,8 +8,8 @@ export const adapters: SchedulerAdapter[] = [
   new SystemdAdapter("user"),
   new SystemdAdapter("system"),
   new CronAdapter(),
-  new AgentAdapter("codex"),
   new AgentAdapter("claude"),
+  new AgentAdapter("codex"),
 ];
 
 export function findAdapter(id: string): SchedulerAdapter | undefined {

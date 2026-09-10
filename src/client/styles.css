@@ -144,6 +144,11 @@ button:disabled { cursor: not-allowed; opacity: 0.45; }
 .header-status { gap: 9px; color: var(--text-dim); font: 11px/1 "Geist Mono", monospace; }
 .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px var(--green-soft); }
 .host-name { color: var(--text-soft); }
+.header-platform { color: var(--text); font-weight: 610; }
+.header-platform.platform-wsl { color: var(--green); }
+.header-platform.platform-windows { color: var(--blue); }
+.header-platform.platform-macos { color: var(--text-soft); }
+.header-platform.platform-linux { color: var(--amber); }
 .header-divider { width: 1px; height: 14px; background: var(--line-strong); margin: 0 3px; }
 .header-actions { justify-content: flex-end; gap: 7px; }
 .icon-button { width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 8px; display: grid; place-items: center; background: var(--panel); color: var(--text-soft); transition: 140ms ease; }
@@ -157,7 +162,10 @@ button:disabled { cursor: not-allowed; opacity: 0.45; }
 .eyebrow { margin: 0 0 7px; color: var(--green); font: 10px/1 "Geist Mono", monospace; font-weight: 650; letter-spacing: 0.14em; }
 .page-intro h1 { margin: 0; font-size: clamp(27px, 3vw, 36px); line-height: 1.1; font-weight: 730; letter-spacing: -0.045em; }
 .page-intro > div > p:last-child { margin: 10px 0 0; color: var(--text-soft); font-size: 14px; }
-.timezone-chip { display: flex; align-items: center; gap: 8px; padding: 8px 11px; border: 1px solid var(--line); border-radius: 8px; color: var(--text-dim); background: var(--panel); font: 10px/1 "Geist Mono", monospace; }
+.environment-chips { display: flex; align-items: center; gap: 7px; }
+.timezone-chip, .platform-chip { display: flex; align-items: center; gap: 8px; padding: 8px 11px; border: 1px solid var(--line); border-radius: 8px; color: var(--text-dim); background: var(--panel); font: 10px/1 "Geist Mono", monospace; }
+.platform-chip { color: var(--text-soft); }
+.platform-chip svg { color: var(--green); }
 .timezone-chip span { width: 5px; height: 5px; border-radius: 50%; background: var(--blue); }
 
 .source-strip { display: flex; gap: 8px; padding-bottom: 22px; overflow-x: auto; scrollbar-width: thin; }
@@ -358,7 +366,7 @@ tbody tr:last-child td { border-bottom: 0; }
   .app-header { height: 58px; }
   .page-intro { align-items: flex-start; }
   .page-intro > div > p:last-child { max-width: 260px; }
-  .timezone-chip { display: none; }
+  .environment-chips { display: none; }
   .main-content { padding-top: 29px; }
   .source-pill { min-width: 132px; }
   .summary-card { min-height: 102px; padding: 17px 14px; gap: 9px; }

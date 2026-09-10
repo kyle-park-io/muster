@@ -9,6 +9,15 @@ export type ScheduleState = "running" | "idle" | "paused" | "failed" | "unknown"
 
 export type SourceStatus = "connected" | "empty" | "unavailable" | "error";
 
+export type PlatformId = "windows" | "wsl" | "macos" | "linux" | "unknown";
+
+export interface PlatformInfo {
+  id: PlatformId;
+  label: string;
+  release: string;
+  architecture: string;
+}
+
 export interface SchedulerSource {
   id: SourceId;
   name: string;
@@ -42,6 +51,7 @@ export interface OverviewResponse {
   generatedAt: string;
   hostname: string;
   timezone: string;
+  platform: PlatformInfo;
   sources: SchedulerSource[];
   schedules: ScheduleItem[];
 }
