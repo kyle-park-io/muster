@@ -1,56 +1,59 @@
+**English** | [한국어](README.ko.md)
+
 # Muster
 
-로컬 컴퓨터에서 반복 실행되는 작업을 한곳에서 살펴보고 제어하는 대시보드입니다.
-Windows, WSL, macOS, Linux를 구분해 현재 실행 환경을 표시합니다.
-WSL에서 실행하면 Windows Task Scheduler와 WSL 내부의 systemd 및 cron을 함께 조회합니다.
-환경 필터와 소스 필터를 따로 제공하므로 `Windows · Codex`와 `WSL · Codex`처럼
-같은 에이전트도 실행 환경별로 구분할 수 있습니다.
+A dashboard for viewing and controlling the jobs that run repeatedly on your local computer.
+It detects whether you are on Windows, WSL, macOS or Linux and shows the current environment.
+When run on WSL, it lists both Windows Task Scheduler and the systemd and cron inside WSL.
+Environment and source filters are separate, so the same agent can be told apart by
+environment, as in `Windows · Codex` and `WSL · Codex`.
 
-## 현재 지원 범위
+## Current support
 
-| 소스 | 조회 | 켜기와 끄기 | 지금 실행 | 로그 |
+| Source | View | Enable and disable | Run now | Logs |
 | --- | --- | --- | --- | --- |
-| Windows Task Scheduler | 지원 | 사용자 소유 작업 | 사용자 소유 작업 | 준비 중 |
-| 사용자 systemd timer | 지원 | 지원 | 지원 | 지원 |
-| 시스템 systemd timer | 지원 | 조회 전용 | 조회 전용 | 지원 |
-| 사용자 crontab | 지원 | 지원 | 지원 | 별도 표준 로그 없음 |
-| Codex 자동화 | Windows와 현재 환경의 로컬 파일 감지 | 조회 전용 | 조회 전용 | 준비 중 |
-| Claude 예약 작업 | Windows와 현재 환경의 설치 상태 감지 | 조회 전용 | 조회 전용 | 준비 중 |
+| Windows Task Scheduler | Supported | User-owned tasks | User-owned tasks | Coming soon |
+| User systemd timer | Supported | Supported | Supported | Supported |
+| System systemd timer | Supported | View only | View only | Supported |
+| User crontab | Supported | Supported | Supported | No separate standard log |
+| Codex automations | Detected from local files on Windows and the current environment | View only | View only | Coming soon |
+| Claude scheduled tasks | Detected from the install state on Windows and the current environment | View only | View only | Coming soon |
 
-시스템 범위의 제어는 관리자 권한 처리가 필요하므로 현재 읽기 전용입니다. Codex와
-Claude의 로컬 저장 형식도 공개된 제어 계약이 확인된 범위에서만 읽습니다.
+Control at system scope needs administrator privileges, so it is read-only for now. Muster
+reads the local storage formats of Codex and Claude only where a public control contract has
+been confirmed.
 
-## 시작하기
+## Getting started
 
-Node.js 24 이상을 권장합니다.
+Node.js 24 or later is recommended.
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-브라우저에서 `http://127.0.0.1:4317`을 엽니다. 로컬 API는
-`http://127.0.0.1:4318`에서 실행됩니다.
+Open `http://127.0.0.1:4317` in your browser. The local API runs at
+`http://127.0.0.1:4318`.
 
-프로덕션 빌드와 실행은 다음과 같습니다.
+To build and run for production:
 
 ```bash
 pnpm build
 pnpm start
 ```
 
-## 안전 장치
+## Safeguards
 
-- 서버는 `127.0.0.1`에만 바인딩됩니다.
-- 상태 변경 API는 JSON 요청과 로컬 Origin만 허용합니다.
-- 사용자 systemd timer에만 `enable --now`, `disable --now`, `start`를 실행합니다.
-- Windows에서는 현재 사용자 소유의 일반 작업만 제어합니다.
-- Microsoft와 시스템 Windows 작업은 조회 전용입니다.
-- cron 항목을 끌 때는 원본 행을 인코딩한 Muster 표식으로 보존합니다.
-- 모든 상태 변경은 대상과 실제 작업을 보여주는 확인창을 거칩니다.
-- 시스템 systemd timer와 에이전트 스케줄은 현재 조회 전용입니다.
+- The server binds only to `127.0.0.1`.
+- APIs that change state accept only JSON requests and a local Origin.
+- `enable --now`, `disable --now` and `start` run only on user systemd timers.
+- On Windows, only ordinary tasks owned by the current user are controlled.
+- Microsoft and system Windows tasks are view only.
+- When a cron entry is disabled, the original line is preserved under a Muster marker that encodes it.
+- Every state change goes through a confirmation dialog that shows the target and the actual job.
+- System systemd timers and agent schedules are view only for now.
 
-## 명령
+## Commands
 
 ```bash
 pnpm typecheck
@@ -59,6 +62,6 @@ pnpm test
 pnpm build
 ```
 
-프론트엔드는 React, Vite, TypeScript, Tailwind CSS를 사용합니다. 로컬 API는
-Fastify와 소스별 어댑터로 구성했습니다. 본문은 Pretendard Variable, 명령과 시간은
-Geist Mono로 표시합니다.
+The frontend uses React, Vite, TypeScript and Tailwind CSS. The local API is built with
+Fastify and per-source adapters. Body text is set in Pretendard Variable, and commands and
+times in Geist Mono.
